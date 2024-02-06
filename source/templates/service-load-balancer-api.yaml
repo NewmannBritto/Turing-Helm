@@ -4,7 +4,10 @@ metadata:
   name: {{ include "inforiver.name" . }}-api-service
   namespace: {{ include "inforiver.name" . }}
   annotations:
-    service.beta.kubernetes.io/aws-load-balancer-name: {{ include "inforiver.name" . }}-loadbalancer
+    service.beta.kubernetes.io/aws-load-balancer-name: "Inforiver-loadbalancer"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+    service.beta.kubernetes.io/aws-load-balancer-extra-security-groups: {{ .Values.loadbalancer.SG_ARN }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ .Values.loadbalancer.SSL_ARN }}
     service.beta.kubernetes.io/aws-load-balancer-subnets: "{{ .Values.loadbalancer.PUB_SUBNET_ID }}, {{ .Values.loadbalancer.APP_SUBNET_NAME }}"
 spec:
   selector:
@@ -15,3 +18,7 @@ spec:
     protocol: TCP
     port: {{ .Values.ports.sourcePort }}
     targetPort: {{ .Values.ports.containerPort }}
+  - name: https
+    protocol: TCP
+    port: 443
+    targetPort: {{ .Values.ports.containerPort }}  
