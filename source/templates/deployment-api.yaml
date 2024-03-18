@@ -82,6 +82,12 @@ spec:
           value: turing
         - name: ENABLE_AUDIT
           value: "1"
+        - name: FABRIC_WAREHOUSE_BLOB_INSERT_TENANTS
+          value: "3"
+        - name: FABRIC_WAREHOUSE_STORAGE_ACCOUNT_KEY
+          value: {{ .Values.env.FABRIC_WAREHOUSE_STORAGE_ACCOUNT_KEY}}
+        - name: FABRIC_WAREHOUSE_STORAGE_ACCOUNT_NAME
+          value: {{ .Values.env.FABRIC_WAREHOUSE_STORAGE_ACCOUNT_NAME}}     
         - name: GET_JOB_USAGE_REPORT
           value: "0"
         - name: GOOGLE_APP_CLIENT_ID
