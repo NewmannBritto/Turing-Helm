@@ -1,0 +1,161 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: infobridge-transformation-worker
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: infobridge-transformation-worker
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate    
+  template:
+    metadata:
+      labels:
+        app: infobridge-transformation-worker
+    spec:
+      volumes:
+        - name: {{ include "inforiver.name" . }}-pv
+          persistentVolumeClaim:
+            claimName: {{ include "inforiver.name" . }}-pvc
+      containers:
+        - name: infobridge-transformation-worker          
+          env:
+            - name: ADMIN_PORTAL_URL
+              value: {{ .Values.env.ADMIN_PORTAL_URL }}
+            - name: PRODUCT_BUILD
+              value: common
+            - name: SERVICE_NAME
+              value: infobridgeTransformationWorker
+          image: {{ .Values.image.repository }}/turing-datasource-integration-worker:{{ .Values.image.tag | default .Chart.AppVersion }}  
+          resources:
+            limits:
+              cpu: 500m
+              memory: 4Gi
+            requests:
+              cpu: 250m
+              memory: 2Gi
+          volumeMounts:
+            - name: {{ include "inforiver.name" . }}-pv
+              mountPath: /mnt/efs
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: {{ include "inforiver.name" . }}-docker-secret    
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: infobridge-writeback-worker
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: infobridge-writeback-worker
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate    
+  template:
+    metadata:
+      labels:
+        app: infobridge-writeback-worker
+    spec:
+      volumes:
+        - name: {{ include "inforiver.name" . }}-pv
+          persistentVolumeClaim:
+            claimName: {{ include "inforiver.name" . }}-pvc
+      containers:
+        - name: infobridge-writeback-worker         
+          env:
+            - name: ADMIN_PORTAL_URL
+              value: {{ .Values.env.ADMIN_PORTAL_URL }}
+            - name: PRODUCT_BUILD
+              value: inforiver
+            - name: LISTENER_MODE
+              value: dataflow
+          image: {{ .Values.image.repository }}/turing-writeback-worker:{{ .Values.image.tag | default .Chart.AppVersion }}  
+          resources:
+            limits:
+              cpu: '1'
+              memory: 2Gi
+            requests:
+              cpu: 250m
+              memory: 500Mi
+          volumeMounts:
+            - name: {{ include "inforiver.name" . }}-pv
+              mountPath: /mnt/efs
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: {{ include "inforiver.name" . }}-docker-secret    
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: infobridge-visual-worker
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: infobridge-visual-worker
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate    
+  template:
+    metadata:
+      labels:
+        app: infobridge-visual-worker
+    spec:
+      volumes:
+        - name: {{ include "inforiver.name" . }}-pv
+          persistentVolumeClaim:
+            claimName: {{ include "inforiver.name" . }}-pvc
+      containers:
+        - name: infobridge-visual-worker        
+          env:
+            - name: ADMIN_PORTAL_URL
+              value: {{ .Values.env.ADMIN_PORTAL_URL }}
+            - name: PRODUCT_BUILD
+              value: inforiver
+            - name: SERVICE_NAME
+              value: infobridgeVisualWorker
+            - name: VISUAL_WORKER_LISTENER_MODE
+              value: dataFlowSourceIntegration
+          image: {{ .Values.image.repository }}/turing-writeback-worker:{{ .Values.image.tag | default .Chart.AppVersion }}  
+          resources:
+            limits:
+              cpu: 500m
+              memory: 2Gi
+            requests:
+              cpu: 250m
+              memory: 1Gi
+          volumeMounts:
+            - name: {{ include "inforiver.name" . }}-pv
+              mountPath: /mnt/efs
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: {{ include "inforiver.name" . }}-docker-secret    
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
