@@ -3,9 +3,9 @@ entries:
   inforiver:
   - apiVersion: v2
     appVersion: OPV3.2.1.0
-    created: "2024-08-29T15:09:42.0345832+05:30"
+    created: "2024-09-17T12:20:27.9752485+05:30"
     description: Inforiver Helm chart for Kubernetes
-    digest: 90ad85663028e411ac59dd949117260d429c40ab0290ee8eedc32bdbaeca1d59
+    digest: d078034fa95fa5373faaed682cd3c78cbe9ed31c239f95b7e1a8cea21ddf0209
     maintainers:
     - email: mohanrd@lumel.com
       name: Mohanraj Durairaj
@@ -16,4 +16,4 @@ entries:
     urls:
     - Packages/inforiver-0.1.0.tgz
     version: 0.1.0
-generated: "2024-08-29T15:09:42.0345832+05:30"
+generated: "2024-09-17T12:20:27.974522+05:30"
