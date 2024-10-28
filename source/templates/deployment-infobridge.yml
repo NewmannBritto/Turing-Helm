@@ -141,7 +141,7 @@ spec:
               value: infobridgeVisualWorker
             - name: VISUAL_WORKER_LISTENER_MODE
               value: dataFlowSourceIntegration
-          image: {{ .Values.image.repository }}/turing-writeback-worker:{{ .Values.image.tag | default .Chart.AppVersion }}  
+          image: {{ .Values.image.repository }}/turing-visual-worker:{{ .Values.image.tag | default .Chart.AppVersion }}  
           resources:
             limits:
               cpu: 500m
