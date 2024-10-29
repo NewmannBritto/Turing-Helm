@@ -142,9 +142,7 @@ spec:
         - name: PREVIEW_ZIP_SIZE_LIMIT_IN_MB
           value: "1"
         - name: PROTOCOL
-          value: https 
-        - name: PRODUCT_BUILD
-          value: common   
+          value: https   
         - name: REDIS_HOST
           value: {{ .Values.env.REDIS_HOST }}        
         - name: REDIS_PASSWORD
