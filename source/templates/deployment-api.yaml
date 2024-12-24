@@ -47,7 +47,7 @@ spec:
         - name: CLOUD_SERVICE_PROVIDER
           value: aws                    
         - name: COMMENTWORKER_QUEUE_NAME
-          value: turing:comment-immediate
+          value: turing-comment-immediate
         - name: CRON_AKS_POD_TTL
           value: "16000"        
         - name: CRON_CONTAINER_IMAGE
@@ -82,6 +82,8 @@ spec:
           value: turing
         - name: DUCKDB_MOUNT_PATH
           value: /mnt/efs  
+        - name: ETLWORKER_WAREHOUSE_PATH
+          value: "warehouse"  
         - name: ENABLE_AUDIT
           value: "1"
         - name: FABRIC_WAREHOUSE_BLOB_INSERT_TENANTS
@@ -136,7 +138,7 @@ spec:
         - name: ORCHESTRATOR_WRITEBACK_WORKER_CONTAINER_IMAGE
           value: {{ .Values.image.repository }}/turing-writeback-worker:{{ .Values.image.tag | default .Chart.AppVersion }}
         - name: PAGE_LOAD_WAIT_TIME
-          value: "95000"
+          value: "150000"
         - name: PORT
           value: "{{ .Values.ports.containerPort }}"
         - name: PREVIEW_ZIP_SIZE_LIMIT_IN_MB
@@ -174,7 +176,7 @@ spec:
         - name: WEBHOOK_KEY
           value: {{ .Values.env.WEBHOOK_KEY }}  
         - name: WORKER_QUEUE_NAME
-          value: turing:email-notification
+          value: turing-email-notification
         - name: WRITEBACK_PAYLOAD_AKS_THRESHOLD
           value: "150000"                     
         image: {{ .Values.image.repository }}/turing-api:{{ .Values.image.tag | default .Chart.AppVersion }}
