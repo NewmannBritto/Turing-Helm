@@ -37,7 +37,7 @@ spec:
           resources:
             limits:
               cpu: 500m
-              memory: 4Gi
+              memory: 2Gi
             requests:
               cpu: 250m
               memory: 2Gi
@@ -146,7 +146,7 @@ spec:
           resources:
             limits:
               cpu: 500m
-              memory: 2Gi
+              memory: 4Gi
             requests:
               cpu: 250m
               memory: 1Gi
@@ -160,3 +160,62 @@ spec:
         - name: {{ include "inforiver.name" . }}-docker-secret    
       restartPolicy: Always
       terminationGracePeriodSeconds: 30      
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: infobridge-visual-worker
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: infobridge-visual-worker
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate    
+  template:
+    metadata:
+      labels:
+        app: infobridge-visual-worker
+    spec:
+      volumes:
+        - name: {{ include "inforiver.name" . }}-pv
+          persistentVolumeClaim:
+            claimName: {{ include "inforiver.name" . }}-pvc
+      containers:
+        - name: infobridge-visual-worker        
+          env:
+            - name: ADMIN_PORTAL_URL
+              value: {{ .Values.env.ADMIN_PORTAL_URL }}
+            - name: PRODUCT_BUILD
+              value: inforiver
+            - name: SERVICE_NAME
+              value: infobridgeVisualWorker
+            - name: VISUAL_WORKER_LISTENER_MODE
+              value: dataFlowSourceIntegration
+          image: {{ .Values.image.repository }}/turing-visual-worker:{{ .Values.image.tag | default .Chart.AppVersion }}  
+          ports:
+            - containerPort: 9006
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 2Gi
+            requests:
+              cpu: 250m
+              memory: 1Gi
+          volumeMounts:
+            - name: {{ include "inforiver.name" . }}-pv
+              mountPath: /mnt/efs
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: {{ include "inforiver.name" . }}-docker-secret    
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30            
