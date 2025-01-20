@@ -79,9 +79,7 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 loadbalancer: 
-  SSL_ARN: "" 
-  PUB_SUBNET_ID: ""
-  APP_SUBNET_NAME: ""  
+  SSL_ARN: ""   
 
 nodeSelector: {}
 

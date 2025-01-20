@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: {{ include "inforiver.name" . }}-api
   namespace: {{ include "inforiver.name" . }}
+  labels:
+    role: api
 spec:
   replicas: 1
   selector:

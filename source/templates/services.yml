@@ -1,0 +1,73 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: infobridge-engine-svc
+  namespace: {{ include "inforiver.name" . }}
+  labels:
+    app: infobridge-engine-worker
+spec:
+  ports:
+    - protocol: TCP
+      port: 9006
+      targetPort: 9006
+  selector:
+    app: infobridge-engine-worker
+  type: ClusterIP
+  sessionAffinity: None
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  internalTrafficPolicy: Cluster
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: inforiver-api-service
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 12000
+  selector:
+    app: inforiver-app
+    role: api
+  type: ClusterIP
+  sessionAffinity: None
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  internalTrafficPolicy: Cluster
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: inforiver
+  name: inforiver-api-ingress
+  annotations:
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.loadbalancer.SSL_ARN }}
+    kubernetes.io/ingress.class: alb
+spec:
+  ingressClassName: alb
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: inforiver-api-service
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+  - https:
+      paths:
+      - backend:
+          service:
+            name: inforiver-api-service
+            port:
+              number: 443
+        path: /
+        pathType: Prefix      
