@@ -9,7 +9,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ include "inforiver.name" . }}-app
+      app: {{ include "inforiver.name" . }}-api
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "inforiver.name" . }}-app
+        app: {{ include "inforiver.name" . }}-api
     spec:
       containers:
       - env:        

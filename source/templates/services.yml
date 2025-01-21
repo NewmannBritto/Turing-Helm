@@ -30,7 +30,7 @@ spec:
       port: 80
       targetPort: 12000
   selector:
-    app: inforiver-app
+    app: inforiver-api
     role: api
   type: ClusterIP
   sessionAffinity: None
@@ -42,7 +42,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  namespace: inforiver
+  namespace: {{ include "inforiver.name" . }}
   name: inforiver-api-ingress
   annotations:
     alb.ingress.kubernetes.io/healthcheck-path: /
