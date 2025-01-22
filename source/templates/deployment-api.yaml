@@ -19,6 +19,7 @@ spec:
     metadata:
       labels:
         app: {{ include "inforiver.name" . }}-api
+        role: api
     spec:
       containers:
       - env:        

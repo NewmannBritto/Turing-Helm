@@ -79,7 +79,8 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 loadbalancer: 
-  SSL_ARN: ""   
+  SSL_ARN: "" 
+  SG_ARN: ""  
 
 nodeSelector: {}
 

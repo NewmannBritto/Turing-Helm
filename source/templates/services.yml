@@ -48,8 +48,9 @@ metadata:
     alb.ingress.kubernetes.io/healthcheck-path: /
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.loadbalancer.SSL_ARN }}
     kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.loadbalancer.SSL_ARN }}
+    alb.ingress.kubernetes.io/security-groups: {{ .Values.loadbalancer.SG_ARN }}
 spec:
   ingressClassName: alb
   rules:
@@ -59,15 +60,6 @@ spec:
           service:
             name: inforiver-api-service
             port:
-              number: 80
-        path: /
-        pathType: Prefix
-  - https:
-      paths:
-      - backend:
-          service:
-            name: inforiver-api-service
-            port:
               number: 443
         path: /
-        pathType: Prefix      
+        pathType: Prefix     
