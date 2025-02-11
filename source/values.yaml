@@ -81,6 +81,7 @@ autoscaling:
 loadbalancer: 
   SSL_ARN: "" 
   SG_ARN: ""  
+  NAME: ""
 
 nodeSelector: {}
 

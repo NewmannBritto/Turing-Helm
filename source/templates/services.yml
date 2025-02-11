@@ -49,6 +49,7 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/load-balancer-name: {{ .Values.loadbalancer.NAME }}
     alb.ingress.kubernetes.io/certificate-arn: {{ .Values.loadbalancer.SSL_ARN }}
     alb.ingress.kubernetes.io/security-groups: {{ .Values.loadbalancer.SG_ARN }}
 spec:

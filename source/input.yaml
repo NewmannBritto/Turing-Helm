@@ -47,5 +47,4 @@ env:
 loadbalancer: 
   SG_ARN: ""
   SSL_ARN: "" 
-  PUB_SUBNET_ID: ""
-  APP_SUBNET_NAME: ""  
+  NAME: "" 
