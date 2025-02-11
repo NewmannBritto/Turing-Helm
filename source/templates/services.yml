@@ -60,6 +60,6 @@ spec:
           service:
             name: inforiver-api-service
             port:
-              number: 443
+              number: 80
         path: /
         pathType: Prefix     

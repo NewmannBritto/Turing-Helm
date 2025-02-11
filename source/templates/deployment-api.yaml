@@ -5,11 +5,13 @@ metadata:
   namespace: {{ include "inforiver.name" . }}
   labels:
     role: api
+    app: {{ include "inforiver.name" . }}-api
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: {{ include "inforiver.name" . }}-api
+      role: api
   strategy:
     rollingUpdate:
       maxSurge: 25%
