@@ -1,0 +1,494 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "inforiver.name" . }}-audit
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "{{ include "inforiver.name" . }}-audit"
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ include "inforiver.name" . }}-audit
+    spec:
+      containers:
+      - env:
+        - name: ADMIN_PORTAL_URL
+          value: {{ .Values.env.ADMIN_PORTAL_URL }}
+        image: "{{ .Values.image.repository }}/turing-audit:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: Always
+        name: {{ include "inforiver.name" . }}-audit
+        resources:
+          limits:
+            cpu: 250m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+      imagePullSecrets:
+      - name: {{ include "inforiver.name" . }}-docker-secret
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "inforiver.name" . }}-comment-worker
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "inforiver.name" . }}-comment-worker
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ include "inforiver.name" . }}-comment-worker
+    spec:
+      containers:
+      - env:
+        - name: ADMIN_PORTAL_URL
+          value: {{ .Values.env.ADMIN_PORTAL_URL }}
+        - name: SERVICE_NAME
+          value: commentWorker
+        image: "{{ .Values.image.repository }}/turing-worker:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: Always
+        name: {{ include "inforiver.name" . }}-comment-worker
+        resources:
+          limits:
+            cpu: 250m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+      imagePullSecrets:
+      - name: {{ include "inforiver.name" . }}-docker-secret
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "inforiver.name" . }}-cron
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "inforiver.name" . }}-cron
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ include "inforiver.name" . }}-cron
+    spec:
+      containers:
+      - env:
+        - name: ADMIN_PORTAL_URL
+          value: {{ .Values.env.ADMIN_PORTAL_URL }}
+        image: "{{ .Values.image.repository }}/turing-cron:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: Always
+        name: {{ include "inforiver.name" . }}-cron
+        resources:
+          limits:
+            cpu: 250m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+      imagePullSecrets:
+      - name: {{ include "inforiver.name" . }}-docker-secret
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "inforiver.name" . }}-orchestrator
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "inforiver.name" . }}-orchestrator
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ include "inforiver.name" . }}-orchestrator
+    spec:
+      containers:
+      - env:
+        - name: ADMIN_PORTAL_URL
+          value: {{ .Values.env.ADMIN_PORTAL_URL }}
+        image: "{{ .Values.image.repository }}/turing-orchestrator:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: Always
+        name: {{ include "inforiver.name" . }}-orchestrator
+        resources:
+          limits:
+            cpu: 250m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+      imagePullSecrets:
+      - name: {{ include "inforiver.name" . }}-docker-secret
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30  
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "inforiver.name" . }}-worker
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "inforiver.name" . }}-worker
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ include "inforiver.name" . }}-worker
+    spec:
+      containers:
+      - env:
+        - name: ADMIN_PORTAL_URL
+          value: {{ .Values.env.ADMIN_PORTAL_URL }}
+        image: "{{ .Values.image.repository }}/turing-worker:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: Always
+        name: {{ include "inforiver.name" . }}-worker
+        resources:
+          limits:
+            cpu: 250m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+      imagePullSecrets:
+      - name: {{ include "inforiver.name" . }}-docker-secret
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "inforiver.name" . }}-writeback-worker
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "inforiver.name" . }}-writeback-worker
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ include "inforiver.name" . }}-writeback-worker
+    spec:
+      containers:
+      - env:
+        - name: ADMIN_PORTAL_URL
+          value: {{ .Values.env.ADMIN_PORTAL_URL }}
+        image: "{{ .Values.image.repository }}/turing-writeback-worker:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: Always
+        name: {{ include "inforiver.name" . }}-writeback-worker
+        resources:
+          limits:
+            cpu: 250m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+      imagePullSecrets:
+      - name: {{ include "inforiver.name" . }}-docker-secret
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "inforiver.name" . }}-writeback-worker1
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "inforiver.name" . }}-writeback-worker1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ include "inforiver.name" . }}-writeback-worker1
+    spec:
+      containers:
+      - env:
+        - name: ADMIN_PORTAL_URL
+          value: {{ .Values.env.ADMIN_PORTAL_URL }}
+        image: "{{ .Values.image.repository }}/turing-writeback-worker:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: Always
+        name: {{ include "inforiver.name" . }}-writeback-worker
+        resources:
+          limits:
+            cpu: 250m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+      imagePullSecrets:
+      - name: {{ include "inforiver.name" . }}-docker-secret
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "inforiver.name" . }}-autowriteback-worker
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "inforiver.name" . }}-autowriteback-worker
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ include "inforiver.name" . }}-autowriteback-worker
+    spec:
+      containers:
+      - env:
+        - name: ADMIN_PORTAL_URL
+          value: {{ .Values.env.ADMIN_PORTAL_URL }}
+        - name: IS_AUTO_WRITEBACK_CONTAINER
+          value: "Y"
+        image: "{{ .Values.image.repository }}/turing-writeback-worker:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: Always
+        name: {{ include "inforiver.name" . }}-autowriteback-worker
+        resources:
+          limits:
+            cpu: 250m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+      imagePullSecrets:
+      - name: {{ include "inforiver.name" . }}-docker-secret
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30  
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "inforiver.name" . }}-visual-worker
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "inforiver.name" . }}-visual-worker
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ include "inforiver.name" . }}-visual-worker
+    spec:
+      containers:
+      - env:
+        - name: ADMIN_PORTAL_URL
+          value: {{ .Values.env.ADMIN_PORTAL_URL }}
+        image: "{{ .Values.image.repository }}/turing-visual-worker:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: Always
+        name: {{ include "inforiver.name" . }}-visual-worker
+        resources:
+          limits:
+            cpu: 250m
+            memory: 2Gi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+      imagePullSecrets:
+      - name: {{ include "inforiver.name" . }}-docker-secret
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "inforiver.name" . }}-etl-worker
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "inforiver.name" . }}-etl-worker
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ include "inforiver.name" . }}-etl-worker
+    spec:
+      containers:
+      - env:
+        - name: ADMIN_PORTAL_URL
+          value: {{ .Values.env.ADMIN_PORTAL_URL }}
+        image: "{{ .Values.image.repository }}/turing-etl-worker:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: Always
+        name: {{ include "inforiver.name" . }}-etl-worker
+        resources:
+          limits:
+            cpu: 250m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+      imagePullSecrets:
+      - name: {{ include "inforiver.name" . }}-docker-secret
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "inforiver.name" . }}-mdm-worker
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "inforiver.name" . }}-mdm-worker
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ include "inforiver.name" . }}-mdm-worker
+    spec:
+      containers:
+      - env:
+        - name: ADMIN_PORTAL_URL
+          value: {{ .Values.env.ADMIN_PORTAL_URL }}
+        - name: PRODUCT_BUILD
+          value: mde  
+        image: "{{ .Values.image.repository }}/turing-mdm-worker:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: Always
+        name: {{ include "inforiver.name" . }}-mdm-worker
+        resources:
+          limits:
+            cpu: 1
+            memory: 2Gi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+      imagePullSecrets:
+      - name: {{ include "inforiver.name" . }}-docker-secret
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "inforiver.name" . }}-editable-visual-worker
+  namespace: {{ include "inforiver.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "inforiver.name" . }}-editable-visual-worker
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ include "inforiver.name" . }}-editable-visual-worker
+    spec:
+      containers:
+      - env:
+        - name: ADMIN_PORTAL_URL
+          value: {{ .Values.env.ADMIN_PORTAL_URL }}
+        - name: PRODUCT_BUILD
+          value: mde 
+        image: "{{ .Values.image.repository }}/turing-visual-worker:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: Always
+        name: {{ include "inforiver.name" . }}-editable-visual-worker
+        resources:
+          limits:
+            cpu: 250m
+            memory: 3Gi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+      imagePullSecrets:
+      - name: {{ include "inforiver.name" . }}-docker-secret
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
